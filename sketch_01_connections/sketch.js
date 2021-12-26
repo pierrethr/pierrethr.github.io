@@ -1,5 +1,6 @@
-const w = 500;
-const h = 1000;
+let w = 500;
+let h = 1000;
+let boxw;
 const maxParticles  = 300;
 let particlesCount = 10;
 let direction = 1;
@@ -10,6 +11,9 @@ let agentRadius = 150;
 
 // --------------------------------------------
 function setup() {
+  w = displayWidth;
+  h = displayHeight;
+  
   createCanvas(w, h);
 
   agent = new Agent();
