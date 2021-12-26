@@ -1,5 +1,6 @@
 let w = 500;
 let h = 1000;
+let xmin, xmax;
 let boxw;
 const maxParticles  = 300;
 let particlesCount = 10;
@@ -13,13 +14,15 @@ let agentRadius = 150;
 function setup() {
   w = displayWidth;
   h = displayHeight;
-  
+
   createCanvas(w, h);
 
   agent = new Agent();
+  xmin = agent.pos.x - 300;
+  xmax = agent.pos.x + 300;
 
   for (let p=0; p<maxParticles; p++) {
-    particles[p] = new Particle(p, createVector(random(w), random(h)), random(speed)+1);
+    particles[p] = new Particle(p, createVector(random(xmin, xmax), random(h)), random(speed)+1);
   }
 }
 
@@ -33,7 +36,6 @@ function draw() {
   }
   
   if (frameCount % 50 == 0) {
-    console.log(particlesCount);
     particlesCount += direction;
   }
   
@@ -69,6 +71,7 @@ class Agent {
       let dist = this.pos.dist(particles[p].pos);
       if (dist <= agentRadius) {
         line(this.pos.x, this.pos.y, particles[p].pos.x, particles[p].pos.y);
+        particles[p].touched = true;
       }
     }
 
@@ -80,6 +83,7 @@ class Particle {
   id = 0;
   pos = 0;
   speed = 0;
+  touched = false;
 
   constructor(_id, _pos, _speed) {
     this.id = _id;
@@ -91,12 +95,19 @@ class Particle {
     this.pos.y += this.speed;
     // this.pos.x += random(-5,5);
 
-    if (this.pos.y > height)  this.pos.y = -20;
+    if (this.pos.y > height)  {
+      this.reset();
+    }
+  }
+
+  reset() {
+    this.pos.y = -20;
+    this.pos.x = random(xmin, xmax);
   }
 
   draw() {
-    // fill(255);
     fill(0);
+    // fill(255 * this.touched);
     stroke(255);
     ellipse(this.pos.x, this.pos.y, 10, 10);
   }
