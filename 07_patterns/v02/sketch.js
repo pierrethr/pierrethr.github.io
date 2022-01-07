@@ -7,10 +7,14 @@ let origin;
 
 let patterns = new Array();
 
+let useColor = false;
+let useSpecificColor = false;
+
 
 // --------------------------------------------
 function setup() { 
   angleMode(DEGREES);
+  colorMode(HSB);
   // ellipseMode(CORNER);
   w = windowWidth;
   h = windowHeight;
@@ -18,7 +22,7 @@ function setup() {
   createCanvas(w, h, WEBGL); 
   origin = createVector(-(w/2), -(h/2));
 
-  for (let p=0; p<16; p++) {
+  for (let p=0; p<20; p++) {
     patterns.push(new AnimatedPattern());
   }
   
@@ -34,7 +38,7 @@ function draw() {
   let gridW = ((pDrawSize * pSize) + spacing)*4;
   
   push();
-    translate(- (gridW/2)-(gridW/6), -(pDrawSize*pSize)-gridW/3); // offsetting because origin of canvas in WEBGL renderer is the center of the window
+    translate(- (gridW/2)-(gridW/6), -(pDrawSize*pSize)-gridW/2); // offsetting because origin of canvas in WEBGL renderer is the center of the window
     for (let p=1; p<=patterns.length; p++) {
       translate(pDrawSize*pSize + 100, 0);
       patterns[p-1].draw();
@@ -60,12 +64,22 @@ class AnimatedPattern {
 
   animDelay = 80;
   lastAnimTime = 0;
+  r = 0;
+  g = 0;
+  b = 0;
+  h = 0;
 
   // --------------------------------------------
   constructor() {
     // creates an array twice the size of the one being drawm
     //  to allow for diagonal looping of pixels
     //  (ie pixels that exit from the top-right part of array during animation spawn back into the bottom-left part on next frame)
+    
+    this.r = random(255);
+    this.g = random(255);
+    this.b = random(255);
+    this.h = random(255);
+
     this.pattern = new Array(pSize*2);
     for (let row=0; row<this.pattern.length; row++) {
       this.pattern[row] = new Array(pSize*2);
@@ -113,7 +127,11 @@ class AnimatedPattern {
         let x = (col-pSize-1) * pDrawSize;
         let y = row * pDrawSize;
 
-        fill (255 * this.pattern[row][col]);
+        if (!useColor)  fill (255 * this.pattern[row][col]);
+        if (useColor)   fill(random(255)*this.pattern[row][col], random(255)*this.pattern[row][col], random(255)*this.pattern[row][col])
+
+        if (useSpecificColor) fill(this.h, random(0,255), 255* this.pattern[row][col]);
+        
         rect(x, y, pDrawSize, pDrawSize);
       }
     }
