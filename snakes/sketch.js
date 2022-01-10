@@ -1,8 +1,9 @@
 let w, h;
-let initx = 50;
-let inity = 50;
+let initx = 120;
+let inity = 120;
 const spacing = 20;
-const nPoints = 40;
+const gridH = 35;
+const gridW = 25;
 
 const moveDelay = 50;
 let lastMove = 0;
@@ -10,17 +11,18 @@ let lastMove = 0;
 const spawnDelay = 1000;
 let lastSpawn = 0;
 
-let points = new Array(nPoints);
+let points = new Array(gridH);
 let snakes = new Array();
 let snakesCount = -1;
 
-const onRadius = 100;
-const offRadius = 5;
+const onRadius = 80;
+const offRadius = 1;
 const snakeSize = 10;
 const maxSnakes = 20;
 
 const drawSnake = false;
 const drawGrid = true;
+const useColor = false;
 
 // --------------------------------------------
 function setup() { 
@@ -40,7 +42,7 @@ function createGrid() {
   let y = inity;
 
   for (let row=0; row<points.length; row++) {
-    points[row] = new Array(nPoints);
+    points[row] = new Array(gridW);
 
     for (let col=0; col<points[row].length; col++) {
       points[row][col] = new Point(createVector(x, y), row, col);
@@ -118,6 +120,7 @@ class Point {
   pos = 0;
   row = 0;
   col = 0;
+  snake = null;
 
   // ---------------------------------------
   constructor (_pos, _row, _col) {
@@ -125,6 +128,7 @@ class Point {
     this.row = _row;
     this.col = _col;
     this.state = 0;
+    this.snake = null;
   }
 
   // ---------------------------------------
@@ -133,8 +137,8 @@ class Point {
     noStroke();
     // stroke(0);
   
-    if (this.state != 2)  fill(255);
-    else                  fill(0,0,255);
+    if (this.state != 2 && this.snake != null)  fill(this.snake.c);
+    else                                        fill(255);
 
     if (this.state == 0 && drawGrid)  ellipse(this.pos.x, this.pos.y, offRadius, offRadius);
     else if (this.state == 1)         ellipse(this.pos.x, this.pos.y, onRadius, onRadius);
@@ -154,6 +158,7 @@ class Snake {
   size = 0;
   points = new Array();
   justWrapped = false;
+  c = 0;
 
   // ---------------------------------------
   constructor(_id, _size, _spawnPoint) {
@@ -162,8 +167,12 @@ class Snake {
 
     this.points.push(_spawnPoint);
     _spawnPoint.state = 1;
+    _spawnPoint.snake = this;
 
     this.justWrapped = false;
+    if (useColor) this.c = color(random(255),random(255),random(255));
+    else          this.c = color(255);
+    
 
     // console.log("new snake " + this.points[0].state);
     this.move();
@@ -192,6 +201,7 @@ class Snake {
     }
 
     np.state = 1;
+    np.snake = this;
 
     let s = this.points.unshift(np);
     if (s > this.size)  {
@@ -209,26 +219,26 @@ class Snake {
     let freePoints = new Array();
 
     let r, c;
-    r = this.points[0].row > 0 ? this.points[0].row -1 : nPoints-1;
+    r = this.points[0].row > 0 ? this.points[0].row -1 : gridH-1;
     n = new Array(r, this.points[0].col);
 
-    c = this.points[0].col < nPoints-1 ? this.points[0].col+1 : 0;
+    c = this.points[0].col < gridW-1 ? this.points[0].col+1 : 0;
     ne = new Array(r, c);
 
     e = new Array(this.points[0].row, c);
 
-    c = this.points[0].col >  0 ? this.points[0].col-1 : nPoints-1;
+    c = this.points[0].col >  0 ? this.points[0].col-1 : gridW-1;
     nw = new Array(r, c);
 
     w = new Array(this.points[0].row, c);
 
-    r = this.points[0].row < nPoints-1 ? this.points[0].row+1 : 0;
+    r = this.points[0].row < gridH-1 ? this.points[0].row+1 : 0;
     s = new Array(r, this.points[0].col);
 
-    c = this.points[0].col < nPoints-1 ? this.points[0].col+1 : 0;
+    c = this.points[0].col < gridW-1 ? this.points[0].col+1 : 0;
     se = new Array(r, c);
 
-    c = this.points[0].col >  0 ? this.points[0].col-1 : nPoints-1;
+    c = this.points[0].col >  0 ? this.points[0].col-1 : gridW-1;
     sw = new Array(r, c);
 
     // setPointState(n, 2);
@@ -320,6 +330,7 @@ class Snake {
   remove() {
     for (let p=0; p<this.points.length; p++) {
       this.points[p].state = 0;
+      this.points[p].snake = null;
     }
 
     for (let s=0; s<snakes.length; s++) {
