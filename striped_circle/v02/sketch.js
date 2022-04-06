@@ -4,7 +4,7 @@ let circleCenter;
 
 let stripedCircles = new Array();
 
-const addDelay = 1000;
+const addDelay = 500;
 let lastAddTime = 0;
 const maxStripedCircles = 5;
 
@@ -97,7 +97,7 @@ class StripedCircle {
 
   // --------------------------------------------
   constructor () {
-    this.nStripes = Math.round(random(3, 21));
+    this.nStripes = Math.round(random(3, 5));
     this.circleDiam = random(100, 700);
 
     if (this.nStripes % 2 == 0)  this.nStripes-1;

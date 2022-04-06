@@ -7,6 +7,8 @@ let stripedCircles = new Array();
 const addDelay = 1000;
 let lastAddTime = 0;
 const maxStripedCircles = 1;
+const speed = 1;
+const nStripes = 201;
 
 const drawPoints = false;
 
@@ -91,26 +93,25 @@ function intersectLineCircle (p1, p2, cpt, r) {
 class StripedCircle {
   circleDiam = 500;
   stripes = new Array();
-  nStripes = null;
-  stripeW = (this.circleDiam-20) / this.nStripes;
+  stripeW = (this.circleDiam-20) / nStripes;
   stripeH = this.circleDiam * 1.1;
 
   // --------------------------------------------
   constructor () {
-    this.nStripes = 11;
     // this.circleDiam = random(100, 700);
 
-    if (this.nStripes % 2 == 0)  this.nStripes-1;
+    if (nStripes % 2 == 0)  nStripes-1;
 
     this.createStripes();
   }
 
   // --------------------------------------------
   createStripes() {
-    this.stripeW = (this.circleDiam-20) / this.nStripes;
+    console.log(nStripes);
+    this.stripeW = (this.circleDiam-20) / nStripes;
 
     this.stripes = new Array();
-    for (let s=0; s<this.nStripes; s++) {
+    for (let s=0; s<nStripes; s++) {
       let pts = new Array(  createVector((s*this.stripeW)-(this.circleDiam/2)+10, -(this.circleDiam/2)),
                             createVector((s*this.stripeW)+this.stripeW-(this.circleDiam/2)+10, -(this.circleDiam/2))
                           );
@@ -129,7 +130,7 @@ class StripedCircle {
     // this.circleDiam += (sin(frameCount)*5); // update circle diameter
 
     // calculate all intersection points of both vertical lines
-    for (let s=0; s<this.nStripes; s+=2) {
+    for (let s=0; s<nStripes; s+=2) {
       let allIntersects = new Array();
       let lineIntersects;
       for (let p=0; p<this.stripes[s].topPoints.length; p++) {
@@ -144,7 +145,7 @@ class StripedCircle {
     }
     
     if (drawPoints) {
-      for (let s=0; s<this.nStripes; s+=2) {
+      for (let s=0; s<nStripes; s+=2) {
         for (let i=0; i<allIntersects.length; i++) {
           noStroke();
           fill(0, 0, 0);
@@ -157,7 +158,7 @@ class StripedCircle {
   // --------------------------------------------
   // calculate all intersection points of both vertical lines for each stripe
   getIntersects() {
-    for (let s=0; s<this.nStripes; s+=2) {
+    for (let s=0; s<nStripes; s+=2) {
       let allIntersects = new Array();
       let lineIntersects;
       for (let p=0; p<this.stripes[s].topPoints.length; p++) {
@@ -175,7 +176,7 @@ class StripedCircle {
   // --------------------------------------------
   stretchStripes() {
     for (let s=0; s<this.stripes.length; s++) {
-      this.stripes[s].stretch(sin(frameCount)*1);
+      this.stripes[s].stretch(sin(frameCount)*speed);
     }
   }
 
