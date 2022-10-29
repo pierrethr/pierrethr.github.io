@@ -1,7 +1,7 @@
 let w, h;
 
-const frameW = 400;
-const frameH = 800;
+const frameW = 350;
+const frameH = 700;
 
 let spacing = 10;
 
@@ -18,7 +18,7 @@ let rY = 3;
 let lerpInc = 0;
 let currentSquare = 0;
 let currentPoint = 0;
-let framesPerLine = 1;
+let framesPerLine = .2;
 let animDone = false;
 
 let squares = new Array();
@@ -107,6 +107,7 @@ function draw() {
   if (!animDone) {
     if (lerpInc < 1) {
       lerpInc += 1/framesPerLine;
+      // lerpInc += 1;
 
       let cP = squares[currentSquare][currentPoint];
       let nP = getNextPoint(currentSquare, currentPoint);

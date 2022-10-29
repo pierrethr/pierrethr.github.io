@@ -1,6 +1,8 @@
 let w, h;
 
-let vertices = new Array();
+let vertices        = new Array();
+let verticesOffset  = new Array();
+let mode = true;
 
 let angle = 0;
 let sub = new Array();
@@ -8,6 +10,11 @@ let sub = new Array();
 const subDelay = 200;
 let lastSubTime = 0;
 let nSubs = 0;
+
+let animDelay = 10;
+let lastAnimTime = 0;
+
+let speed = 1;
 
 // ----------------------------------------------------------------------
 function setup() {
@@ -78,6 +85,7 @@ function setup() {
 }
 
 function subdivide(_start) {
+  console.log("subdivide " + _start);
   sub = new Array();
   let rndAmt = nSubs/10;
   let rndX, rndY, rndZ;
@@ -85,8 +93,11 @@ function subdivide(_start) {
   sub.push (vertices[_start].copy());
   sub.push (vertices[_start+1].copy());
   sub.push(vertices[_start+1].copy().add(vertices[_start+2]).div(2)); //midpoint
-  rndX = random(0, rndAmt/2);
-  rndY = random(0, rndAmt/2);
+  // rndX = random(0, rndAmt/2);
+  rndX = constrain(random(-rndAmt, rndAmt), -2, 2);
+  // rndX = random(-rndAmt/2, rndAmt/2);
+  // rndY = random(0, rndAmt/2);
+  rndY = constrain(random(-rndAmt, rndAmt), -2, 2);
   rndZ = random(0, rndAmt*2);
   sub[sub.length-1].add (rndX, rndY, rndZ);
 
@@ -123,39 +134,66 @@ function subdivide(_start) {
   vertices.splice(8, 0, sub[11]);
 
 
+
   lastSubTime = millis();
   nSubs++;
   if (nSubs == 20) nSubs = 0;
+
+  console.log(vertices.length);
+}
+
+function animate() {
+  let offset = .2;
+  mode = !mode;
+
+  console.log("ANIMATE" + mode);
+
+  // verticesOffset = vertices;
+  verticesOffset = new Array();
+  for (let v=0; v<vertices.length; v++) {
+    verticesOffset.push(vertices[v].copy());
+    verticesOffset[verticesOffset.length-1].add(random(-offset, offset), random(-offset, offset));
+  }
+
+  lastAnimTime = millis();
 }
 
 function draw() {
   clear();
-
   // if (millis() - lastSubTime >= subDelay) subdivide(nSubs);
+  if (millis() - lastAnimTime >= animDelay) animate();
 
-  angle = frameCount%360;
-  console.log(angle);
-
-  if (angle == 180) subdivide(nSubs);
+  angle = (frameCount%360)*speed;
   // console.log(angle);
+
+  if (angle >= 180 && angle < 200)     subdivide(nSubs);
   // noFill();
+  // fill(0, 255, 0, 200);
   fill(0);
   stroke(255);
   rotateX(angle);
-  scale(100);
+  // rotateY(10);
+  scale(40);
 
 
   
   // beginShape(TRIANGLE_STRIP);
   beginShape(TRIANGLES);
 
-  for (let v=0; v<vertices.length; v++) {
-    // strokeWeight(random(1, 60));
-    // strokeWeight(sin(frameCount/2)*v);
-    // vertices[v].add(random(-.01, .01), random(-.01, .01), random(-.01, .01));
-    // vertices[v].add(random(.01, .02), random(.01, .02), random(.01, .02));
-    vertex(vertices[v].x, vertices[v].y, vertices[v].z);
+  if (mode) {
+    for (let v=0; v<vertices.length; v++) {
+      // strokeWeight(random(1, 60));
+      // strokeWeight(sin(frameCount/2)*v);
+      // vertices[v].add(random(-.01, .01), random(-.01, .01), random(-.01, .01));
+      // vertices[v].add(random(.01, .02), random(.01, .02), random(.01, .02));
+      vertex(vertices[v].x, vertices[v].y, vertices[v].z);
+    }
+  } else {
+    for (let v=0; v<verticesOffset.length; v++) {
+      vertex(verticesOffset[v].x, verticesOffset[v].y, verticesOffset[v].z);
+    }
   }
+  
 
   
 
