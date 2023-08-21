@@ -57,6 +57,7 @@
           var vy = 0.0;
           var vz = 0.0;
           var updateRate = 1/1; // Sensor refresh rate
+          var cnt = 0
 
           function getAccel(){
               DeviceMotionEvent.requestPermission().then(response => {
@@ -67,13 +68,19 @@
                         vz = event.z;
                         console.log(event.acceleration.z);
                         // Send a test message with QoS of 0 to the testtopic
-                        client.publish('accelZ', 'salut', { qos: 0, retain: false }, function (error) {
-                          if (error) {
-                            console.log(error)
-                          } else {
-                            console.log('Published')
-                          }
-                        })
+                        if (cnt == 60) {
+                          client.publish('accelZ', 'salut', { qos: 0, retain: false }, function (error) {
+                            if (error) {
+                              console.log(error)
+                            } else {
+                              console.log('Published')
+                            }
+                          })
+                          cnt = 0
+                        } else {
+                          cnt++;
+                        }
+                        
 
                       })
 
