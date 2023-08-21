@@ -68,6 +68,7 @@
             
               DeviceMotionEvent.requestPermission().then(response => {
                   if (response == 'granted') {
+                    document.getElementById('accelPermsButton').style.display = "none"
                 // Add a listener to get smartphone orientation 
                     // in the alpha-beta-gamma axes (units in degrees)
                       window.addEventListener('devicemotion', (event) => {
