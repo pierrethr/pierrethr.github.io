@@ -63,6 +63,15 @@
                       window.addEventListener('devicemotion', (event) => {
                         vz = event.z;
                         console.log(event.acceleration.z);
+                        // Send a test message with QoS of 0 to the testtopic
+                        client.publish('accelZ', event.acceleration.z.toString(), { qos: 0, retain: false }, function (error) {
+                          if (error) {
+                            console.log(error)
+                          } else {
+                            console.log('Published')
+                          }
+                        })
+
                       })
 
 
