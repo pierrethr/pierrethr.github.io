@@ -42,6 +42,10 @@
             client.subscribe('accelZ')
           })
 
+          client.on('error', function (error) {
+            console.log(error)
+          })
+
           // Receive messages
           client.on('message', function (topic, message) {
             // message is Buffer
