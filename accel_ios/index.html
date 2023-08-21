@@ -62,6 +62,7 @@
           var vz = 0.0;
           var updateRate = 1/1; // Sensor refresh rate
           var cnt = 0
+          var inc = 0
 
           function getAccel(){
               DeviceMotionEvent.requestPermission().then(response => {
@@ -69,10 +70,11 @@
                 // Add a listener to get smartphone orientation 
                     // in the alpha-beta-gamma axes (units in degrees)
                       window.addEventListener('devicemotion', (event) => {
-                        vz = event.z;
+                        inc += event.acceleration.z
                         console.log(event.acceleration.z);
                         // Send a test message with QoS of 0 to the testtopic
                         if (cnt == 10) {
+                          client.publish('inc', inc.toString());
                           client.publish('accelZ', event.acceleration.z.toString(), { qos: 0, retain: false }, function (error) {
                             if (error) {
                               console.log(error)
