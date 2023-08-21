@@ -7,7 +7,7 @@
         <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
         <script>
-          // const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
+          const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
           const host = 'wss://lbefba77.ala.us-east-1.emqxsl.com:8084/mqtt'
           // const host = 'mqtt://lbefba77.ala.us-east-1.emqxsl.com:8883/mqtt'
           const options = {
@@ -17,7 +17,8 @@
             clean: true,
             reconnectPeriod: 1000,
             connectTimeout: 30 * 1000,
-            clientId: 'emqx_test',
+            // clientId: 'emqx_test',
+            clientId: clientId,
             username: 'mqtt',
             password: 'mqtt',
             will: {
