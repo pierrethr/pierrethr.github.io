@@ -38,6 +38,8 @@
                 client.publish('test', 'Hello mqtt')
               }
             })
+
+            client.subscribe('accelZ')
           })
 
           // Receive messages
