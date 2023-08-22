@@ -61,22 +61,24 @@
           var vy = 0.0;
           var vz = 0.0;
           var updateRate = 1/1; // Sensor refresh rate
-          var cnt = 0
+          var cntAccel = 0
+          var cntGyro = 0
           // var inc = 0
+          let gyroX
+          let gyroY
+          let gyroZ
 
           function getAccel(){
             
               DeviceMotionEvent.requestPermission().then(response => {
                   if (response == 'granted') {
                     document.getElementById('accelPermsButton').style.display = "none"
-                // Add a listener to get smartphone orientation 
-                    // in the alpha-beta-gamma axes (units in degrees)
                       window.addEventListener('devicemotion', (event) => {
                         accelZ = parseFloat(event.acceleration.z).toFixed(2)
                         // inc += event.acceleration.z
                         console.log(accelZ);
                         // Send a test message with QoS of 0 to the testtopic
-                        if (cnt == 10) {
+                        if (cntAccel == 10) {
                           // client.publish('inc', inc.toString());
                           client.publish('accelZ', accelZ.toString(), { qos: 0, retain: false }, function (error) {
                             if (error) {
@@ -85,44 +87,78 @@
                               console.log('Published')
                             }
                           })
-                          cnt = 0
-                          document.getElementById('txtValue').innerHTML = accelZ.toString()
+                          cntAccel = 0
+                          document.getElementById('accelData').innerHTML = accelZ.toString()
                         } else {
-                          cnt++;
+                          cntAccel++;
                         }
-                        
-                        
-
                       })
 
 
                       window.addEventListener('deviceorientation',(event) => {
-                          // Expose each orientation angle in a more readable way
-                          rotation_degrees = event.alpha;
-                          frontToBack_degrees = event.beta;
-                          leftToRight_degrees = event.gamma;
-                          
-                          // Update velocity according to how tilted the phone is
-                          // Since phones are narrower than they are long, double the increase to the x velocity
-                          vx = vx + leftToRight_degrees * updateRate*2; 
-                          vy = vy + frontToBack_degrees * updateRate;
-                          
-                          // Update position and clip it to bounds
-                          px = px + vx*.5;
-                          if (px > 98 || px < 0){ 
-                              px = Math.max(0, Math.min(98, px)) // Clip px between 0-98
-                              vx = 0;
+
+                          gyroX = event.beta
+                          gyroY = event.gamma
+                          gyroZ = even.alpha
+
+                          if (cntGyro == 10) {
+                            client.publish('gyroX', gyroX.toString(), { qos: 0, retain: false }, function (error) {
+                              if (error) {
+                                console.log(error)
+                              } else {
+                                console.log('Published')
+                              }
+                            })
+
+                            client.publish('gyroY', gyroY.toString(), { qos: 0, retain: false }, function (error) {
+                              if (error) {
+                                console.log(error)
+                              } else {
+                                console.log('Published')
+                              }
+                            })
+
+                            client.publish('gyroZ', gyroZ.toString(), { qos: 0, retain: false }, function (error) {
+                              if (error) {
+                                console.log(error)
+                              } else {
+                                console.log('Published')
+                              }
+                            })
+                            cntGyro = 0;
+
+                            document.getElementById('gyroData').innerHTML = gyroX.toString() + " : " + gyroY.toString() + " : " + gyroZ.toString()
+
+                          } else {
+                            cntGyro++;
                           }
 
-                          py = py + vy*.5;
-                          if (py > 98 || py < 0){
-                              py = Math.max(0, Math.min(98, py)) // Clip py between 0-98
-                              vy = 0;
-                          }
+                          // Expose each orientation angle in a more readable way
+                          // rotation_degrees = event.alpha;
+                          // frontToBack_degrees = event.beta;
+                          // leftToRight_degrees = event.gamma;
                           
-                          dot = document.getElementsByClassName("indicatorDot")[0]
-                          dot.setAttribute('style', "left:" + (px) + "%;" +
-                                                        "top:" + (py) + "%;");
+                          // // Update velocity according to how tilted the phone is
+                          // // Since phones are narrower than they are long, double the increase to the x velocity
+                          // vx = vx + leftToRight_degrees * updateRate*2; 
+                          // vy = vy + frontToBack_degrees * updateRate;
+                          
+                          // // Update position and clip it to bounds
+                          // px = px + vx*.5;
+                          // if (px > 98 || px < 0){ 
+                          //     px = Math.max(0, Math.min(98, px)) // Clip px between 0-98
+                          //     vx = 0;
+                          // }
+
+                          // py = py + vy*.5;
+                          // if (py > 98 || py < 0){
+                          //     py = Math.max(0, Math.min(98, py)) // Clip py between 0-98
+                          //     vy = 0;
+                          // }
+                          
+                          // dot = document.getElementsByClassName("indicatorDot")[0]
+                          // dot.setAttribute('style', "left:" + (px) + "%;" +
+                          //                               "top:" + (py) + "%;");
                           
                       });
                   }
@@ -138,7 +174,7 @@
             border-radius: 50%;
             position:fixed;
         }
-        #txtValue {
+        .txtValue {
           font-family: 'Courier New', Courier, monospace;
           font-size: 100px;
           color: white;
@@ -152,7 +188,8 @@
     <body style="background-color:black;">
         <button id="accelPermsButton"  style="height:50px;" onclick="getAccel()"><h1>Get Accelerometer Permissions</h1></button>
         <!-- <div class="indicatorDot" style="left:30%; top:30%;"></div> -->
-        <div id="txtValue"></div>
+        <div class="txtValue" id="accelData"></div>
+        <div class="txtValue" id="gyroData"></div>
     </body>
 </html>
 
