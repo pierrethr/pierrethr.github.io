@@ -101,7 +101,15 @@
                           gyroY = parseFloat(event.gamma).toFixed(2)
                           gyroZ = parseFloat(event.alpha).toFixed(2)
 
+                          let gyro = {
+                            x: gyroX,
+                            y: gyroY,
+                            z: gyroZ
+                          }
+
+
                           if (cntGyro == 10) {
+                            client.publish('gyro', JSON.stringify(gyro), { qos: 0, retain: false });
                             client.publish('gyroX', gyroX.toString(), { qos: 0, retain: false });
                             client.publish('gyroY', gyroY.toString(), { qos: 0, retain: false });
                             client.publish('gyroZ', gyroZ.toString(), { qos: 0, retain: false });
