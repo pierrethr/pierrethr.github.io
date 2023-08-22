@@ -97,34 +97,15 @@
 
                       window.addEventListener('deviceorientation',(event) => {
 
-                          gyroX = event.beta
-                          gyroY = event.gamma
-                          gyroZ = event.alpha
+                          gyroX = parseFloat(event.beta).toFixed(2)
+                          gyroY = parseFloat(event.gamma).toFixed(2)
+                          gyroZ = parseFloat(event.alpha).toFixed(2)
 
                           if (cntGyro == 10) {
-                            client.publish('gyroX', gyroX.toString(), { qos: 0, retain: false }, function (error) {
-                              if (error) {
-                                console.log(error)
-                              } else {
-                                console.log('Published')
-                              }
-                            })
+                            client.publish('gyroX', gyroX.toString(), { qos: 0, retain: false });
+                            client.publish('gyroY', gyroY.toString(), { qos: 0, retain: false });
+                            client.publish('gyroZ', gyroZ.toString(), { qos: 0, retain: false });
 
-                            client.publish('gyroY', gyroY.toString(), { qos: 0, retain: false }, function (error) {
-                              if (error) {
-                                console.log(error)
-                              } else {
-                                console.log('Published')
-                              }
-                            })
-
-                            client.publish('gyroZ', gyroZ.toString(), { qos: 0, retain: false }, function (error) {
-                              if (error) {
-                                console.log(error)
-                              } else {
-                                console.log('Published')
-                              }
-                            })
                             cntGyro = 0;
 
                             document.getElementById('gyroData').innerHTML = gyroX.toString() + " : " + gyroY.toString() + " : " + gyroZ.toString()
