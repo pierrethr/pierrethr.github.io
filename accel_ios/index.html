@@ -99,7 +99,7 @@
 
                           gyroX = event.beta
                           gyroY = event.gamma
-                          gyroZ = even.alpha
+                          gyroZ = event.alpha
 
                           if (cntGyro == 10) {
                             client.publish('gyroX', gyroX.toString(), { qos: 0, retain: false }, function (error) {
