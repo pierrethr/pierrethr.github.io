@@ -78,7 +78,7 @@
                         // inc += event.acceleration.z
                         console.log(accelZ);
                         // Send a test message with QoS of 0 to the testtopic
-                        if (cntAccel == 10) {
+                        if (cntAccel == 2) {
                           // client.publish('inc', inc.toString());
                           client.publish('accelZ', accelZ.toString(), { qos: 0, retain: false }, function (error) {
                             if (error) {
@@ -108,7 +108,7 @@
                           }
 
 
-                          if (cntGyro == 10) {
+                          if (cntGyro == 2) {
                             client.publish('gyro', JSON.stringify(gyro), { qos: 0, retain: false });
                             client.publish('gyroX', gyroX.toString(), { qos: 0, retain: false });
                             client.publish('gyroY', gyroY.toString(), { qos: 0, retain: false });
